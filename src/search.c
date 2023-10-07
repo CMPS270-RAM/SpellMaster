@@ -16,6 +16,8 @@ int compareStrings ( char* w1, char* w2 ) {
         if ( l1 < l2 ) return -1;
         if ( l1 > l2 ) return 1;
     }
+    if ( strlen(w1) < strlen(w2) ) return -1;
+    if ( strlen(w1) > strlen(w2) ) return 1;
     return 0; 
 }
 
