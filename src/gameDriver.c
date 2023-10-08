@@ -43,7 +43,7 @@ int main() {
   printf("\e[1;1H\e[2J");
   char *reasonsLost[4] = {
       "has no more spells that can be played",
-      "used a spell that does't statisfy the matching condition",
+      "used a spell that does't satisfy the matching condition",
       "used repeated a previously cast spell", "used an invalid spell"};
 
   char **spellList = readSpells("./spells.txt");
