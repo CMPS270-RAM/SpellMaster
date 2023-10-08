@@ -123,5 +123,7 @@ int main() {
     }
   }
 
+  for ( int i = 0; i < spellCount; i++ ) free(spellList[i]);
   free(spellList);
+  free(game.usedSpells);
 }
