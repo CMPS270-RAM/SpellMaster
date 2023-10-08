@@ -14,9 +14,7 @@ char** readSpells (char* filePath) {
     while ( fscanf(fptr, "%s", temp) == 1 ) {
         int len =strlen(temp);
         spells[count] = (char*) malloc(len*sizeof(char));
-        for (int i=0;i<len;i++){
-            spells[count][i]=temp[i];
-        }
+        strcpy(spells[count],temp);
         count++;
     }
 
