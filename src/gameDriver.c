@@ -69,6 +69,7 @@ int main() {
   game.currentTurn = coinToss(2);
   game.usedSpellsCount = 0;
   game.usedSpells = malloc(sizeof(bool) * spellCount);
+  for ( int i = 0; i < spellCount; i++ ) game.usedSpells[i] = false;
 
   printf("\e[1;1H\e[2J");
   printSpells(spellList, spellCount);
@@ -102,7 +103,7 @@ int main() {
       game.players[game.currentTurn]->reasonLost = 3;
     }
 
-    if (game.usedSpells[spellIndex]) {
+    if (spellIndex != -1 && game.usedSpells[spellIndex]) {
       game.players[game.currentTurn]->lost = true;
       game.players[game.currentTurn]->reasonLost = 2;
     }
