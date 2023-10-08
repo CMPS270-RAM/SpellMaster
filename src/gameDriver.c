@@ -21,9 +21,11 @@ struct GameStatus {
 };
 
 void printSpells(char **spellList, int spellCount) {
+  printf("%50s\n", "Spells List");
+  printf("%50s\n", "-----------");
   int count = 0;
   for (int i = 0; i < spellCount; i++) {
-    if (count < 5) {
+    if (count < 4) {
       printf("%-20s", spellList[i]);
       count++;
     } else {
@@ -32,6 +34,8 @@ void printSpells(char **spellList, int spellCount) {
     }
   }
   printf("\n");
+  for ( int i = 0; i < 100; i++ ) printf("_");
+  printf("\n\n");
 }
 
 int main() {
@@ -116,14 +120,16 @@ int main() {
                                game.lastUsedSpell)) {
         game.players[game.currentTurn]->lost = true;
         game.players[game.currentTurn]->reasonLost = 0;
-        printf("%s won (%s %s)\n", game.players[(game.currentTurn + 1) % 2]->name,
+        printf("%s won (%s %s)\n",
+               game.players[(game.currentTurn + 1) % 2]->name,
                game.players[game.currentTurn]->name,
                reasonsLost[game.players[game.currentTurn]->reasonLost]);
       }
     }
   }
 
-  for ( int i = 0; i < spellCount; i++ ) free(spellList[i]);
+  for (int i = 0; i < spellCount; i++)
+    free(spellList[i]);
   free(spellList);
   free(game.usedSpells);
 }
