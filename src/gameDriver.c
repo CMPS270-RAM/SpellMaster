@@ -12,6 +12,7 @@ struct Player {
   bool lost;
 };
 
+
 struct GameStatus {
   struct Player *players[2];
   int currentTurn;
@@ -48,6 +49,7 @@ int main() {
 
   char **spellList = readSpells("./spells.txt");
   int spellCount = readSpellCount("./spells.txt");
+  
 
   struct Player p1;
   p1.playerNumber = 1;
@@ -57,16 +59,17 @@ int main() {
   scanf("%s", p1.name);
 
   struct Player p2;
-  p2.playerNumber = 2;
-  p2.score = 0;
-  p2.lost = 0;
-  printf("Player %i, Enter your name: ", p2.playerNumber);
-  scanf("%s", p2.name);
+  p1.playerNumber = 1;
+  p1.score = 0;
+  p1.lost = 0;
+  printf("Player %i, Enter your name: ", p1.playerNumber);
+  scanf("%s", p1.name);
 
-  struct GameStatus game;
+ struct GameStatus game;
+
   game.players[0] = &p1;
   game.players[1] = &p2;
-  game.currentTurn = coinToss(2);
+   game.currentTurn = coinToss(2);
   game.usedSpellsCount = 0;
   game.usedSpells = malloc(sizeof(bool) * spellCount);
   for ( int i = 0; i < spellCount; i++ ) game.usedSpells[i] = false;
@@ -83,10 +86,11 @@ int main() {
       printf("%s chooses: %s\n", game.players[abs(game.currentTurn - 1)]->name,
              game.lastUsedSpell);
     }
-
-    printf("%s chooses: ", game.players[game.currentTurn]->name);
     char spell[50];
+    printf("%s chooses: ", game.players[game.currentTurn]->name);
     scanf("%s", spell);
+    
+
 
     if (game.usedSpellsCount != 0) {
       if (!beginsWithLetter(spell, game.lastUsedSpell)) {
