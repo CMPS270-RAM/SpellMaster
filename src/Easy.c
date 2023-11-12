@@ -87,6 +87,7 @@ void checkIfExists(char* read[], char* check, const bool* usedwordList, int read
     char lastLetter = tolower(check[strlen(check) - 1]);
 
     struct Node* list = NULL;
+
     int nodecount = 0;
     for (int j = 0; j < readLength; j++) {
 
@@ -95,13 +96,9 @@ void checkIfExists(char* read[], char* check, const bool* usedwordList, int read
         if (firstLetter == lastLetter && !usedwordList[j]) {
 
             struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+            newNode->data = read[j];
+            newNode->next = NULL;
 
-            if (!usedwordList[j]) {
-                newNode->data = read[j];
-                newNode->next = list;
-                list = newNode;
-                nodecount++;
-            }
         }
     }
 
