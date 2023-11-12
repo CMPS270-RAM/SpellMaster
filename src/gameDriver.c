@@ -92,7 +92,8 @@ void game(int numberOfPlayers, int botDifficulty) {
  struct GameStatus game;
   game.players[0] = &p1;
   game.players[1] = &p2;
-  game.currentTurn = coinToss(2);
+  //game.currentTurn = coinToss(2);
+  game.currentTurn = 1;
   game.usedSpellsCount = 0;
   game.usedSpells = malloc(sizeof(bool) * spellCount);
   for (int i = 0; i < spellCount; i++)
@@ -126,7 +127,7 @@ void game(int numberOfPlayers, int botDifficulty) {
         strcpy(spell, botMedium());
         break;
       case 3:
-        strcpy(spell, botHard( spellList, spellCount, game.usedSpells, game.lastUsedSpell));
+        strcpy(spell, botHard( spellList, spellCount, game.usedSpells, game.lastUsedSpell, game.usedSpellsCount));
         break;
       default:
         strcpy(spell, botEasy());

@@ -82,7 +82,7 @@ struct PathStats {
     double loses;
 };
 
-struct PathStats getPathStats ( struct Node *outWords, struct Node **graph, char**spellList, const bool *usedSpells, const int spellCount, int turn ) {
+struct PathStats getPathStats ( struct Node *outWords, struct Node **graph, char**spellList, bool *usedSpells, const int spellCount, int turn ) {
 
     if ( isEmpty( outWords ) ) {
 
@@ -102,7 +102,7 @@ struct PathStats getPathStats ( struct Node *outWords, struct Node **graph, char
         while ( cur != NULL ) {
             numOutGoing++;
             cur = cur->next;
-        } 
+        }
 
         struct PathStats results [numOutGoing];
         int spellsOutGoing [numOutGoing]; 
@@ -117,21 +117,22 @@ struct PathStats getPathStats ( struct Node *outWords, struct Node **graph, char
 
         for ( int i = 0; i < numOutGoing; i++ ) {
 
-            struct Node *temp = graph[spellsOutGoing[i]];
-            graph[spellsOutGoing[i]] = NULL;
-            for ( int j = 0; j < spellCount; j++ ) {
-                deleteNode(spellsOutGoing[i], &graph[j]);
-            }
-
-            results[i] = getPathStats(temp, graph, spellList, usedSpells, spellCount, turn+1);
-
-            graph[spellsOutGoing[i]] = temp;
-            for (int j = 0; j < spellCount; j++) {
-                if ( !usedSpells[j] && beginsWithLetter(spellList[j], spellList[spellsOutGoing[i]])) {
-                    struct Node *start = graph[j];
-                    insertNode(spellsOutGoing[i], &start);
+                struct Node *temp = graph[spellsOutGoing[i]];
+                graph[spellsOutGoing[i]] = NULL;
+                for ( int j = 0; j < spellCount; j++ ) {
+                    deleteNode(spellsOutGoing[i], &graph[j]);
                 }
-            }
+                usedSpells[spellsOutGoing[i]] = true;
+
+                results[i] = getPathStats(temp, graph, spellList, usedSpells, spellCount, turn+1);
+
+                graph[spellsOutGoing[i]] = temp;
+                for (int j = 0; j < spellCount; j++) {
+                    if ( !usedSpells[j] && spellsOutGoing[i] != j && beginsWithLetter(spellList[spellsOutGoing[i]],spellList[j])) {
+                        insertNode(spellsOutGoing[i], &graph[j]);
+                    }
+                }
+                usedSpells[spellsOutGoing[i]] = false;
 
         }
 
@@ -147,9 +148,11 @@ struct PathStats getPathStats ( struct Node *outWords, struct Node **graph, char
     }
 }
 
-char *botHard( char **spellList, const int spellCount, const bool *usedSpells, const char *previousSpell) {
+char *botHard( char **spellList, const int spellCount, const bool *usedSpells, const char *previousSpell, int turn) {
 
   struct Node *graph [spellCount];
+  bool usedSpellsCopy[spellCount];
+  for ( int i = 0; i < spellCount; i++ ) usedSpellsCopy[i] = usedSpells[i];
 
   for (int i = 0; i < spellCount; i++) {
       graph[i] = NULL;
@@ -166,32 +169,48 @@ char *botHard( char **spellList, const int spellCount, const bool *usedSpells, c
   int possiblePlays [spellCount];
   struct PathStats possiblePlayStats[spellCount];
 
-  for (int i = 0; i < spellCount; i++) {
-    if ( !usedSpells[i] && beginsWithLetter(spellList[i], previousSpell)) {
-        possiblePlays[possiblePlaysCount] = i;
-        possiblePlaysCount++;
-    }
+  if ( turn > 0 ) {
+      for (int i = 0; i < spellCount; i++) {
+          if ( !usedSpells[i] && beginsWithLetter(spellList[i], previousSpell)) {
+              possiblePlays[possiblePlaysCount] = i;
+              possiblePlaysCount++;
+          }
+      }
+  } else {
+      for (int i = 0; i < spellCount; i++) {
+          possiblePlays[possiblePlaysCount] = i;
+          possiblePlaysCount++;
+      }
   }
 
   for ( int i = 0; i < possiblePlaysCount; i++ ) {
 
+      printGraph(spellCount, spellList, graph);
       struct Node *temp = graph[possiblePlays[i]];
       graph[possiblePlays[i]] = NULL;
       for ( int j = 0; j < spellCount; j++ ) {
           deleteNode(possiblePlays[i], &graph[j]);
       }
+      usedSpellsCopy[possiblePlays[i]] = true;
 
-      possiblePlayStats[i] = getPathStats ( temp, graph, spellList, usedSpells, spellCount, 0 );
+      possiblePlayStats[i] = getPathStats ( temp, graph, spellList, usedSpellsCopy, spellCount, 0 );
 
       graph[possiblePlays[i]] = temp;
       for (int j = 0; j < spellCount; j++) {
-          if ( !usedSpells[j] && beginsWithLetter(spellList[j], spellList[possiblePlays[i]])) {
+          if ( !usedSpellsCopy[j] && possiblePlays[i]!=j && beginsWithLetter(spellList[possiblePlays[i]], spellList[j])) {
               struct Node *start = graph[j];
-              insertNode(possiblePlays[i], &start);
+              insertNode(possiblePlays[i], &graph[j]);
           }
       }
+      usedSpellsCopy[possiblePlays[i]] = false;
+
+      printf("\n");
+      printList(graph[possiblePlays[i]], spellList);
+      printf("\n\n");
+      printGraph(spellCount, spellList, graph);
   }
 
+  return "";
 
   double minLoses = pow(2, 64);
   int minLosesWord = -1;

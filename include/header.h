@@ -10,5 +10,5 @@ int coinToss(int n);
 bool checkIfSpellsRemain(char **spellList, int spellCount, bool *usedSpells, char *lastSpell);
 char *botEasy();
 char *botMedium();
-char *botHard(char **spellList, const int spellCount, const bool *usedSpells, const char *previousSpell);
+char *botHard(char **spellList, const int spellCount, const bool *usedSpells, const char *previousSpell, int currentTurn);
 void game(int numberOfPlayers, int botDifficulty);
