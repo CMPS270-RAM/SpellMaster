@@ -1,0 +1,3 @@
+char* botEasy () {
+    return "stupefy";
+}

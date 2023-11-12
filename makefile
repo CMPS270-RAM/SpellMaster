@@ -7,7 +7,7 @@ ODIR=src/obj
 _DEPS = header.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = checks.o coinToss.o readFile.o gameDriver.o search.o
+_OBJ = botEasy.o botMedium.o botHard.o checks.o coinToss.o readFile.o gameDriver.o search.o spellMaster.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: src/%.c $(DEPS)
