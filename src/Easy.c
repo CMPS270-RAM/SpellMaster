@@ -3,63 +3,60 @@
 #include <ctype.h>
 #include <stdlib.h>
 
-typedef struct Node {
-    char* word;
+struct Node {
+    char* data;
     struct Node* next;
-} Node;
+};
 
-Node* store[10]; // Array of linked lists
+void toLowerCase(char* str) {
+    while (*str != '\0') {
+        *str = tolower(*str);
+        str++;
+    }
+}
 
-void CheckIfExists(char** read, char* s[10]) {
-    int length = 0;
-    while (read[length] != NULL) {
-        length++;
+void checkIfExists(char*read[], char* check[]) {
+    int readLength = 0;
+    while (read[readLength] != NULL) {
+        readLength++;
     }
 
-    for (int i = 0; i < length; i++) {
-        char lastLetter = read[i][strlen(read[i]) - 1];
-        char searchKey = tolower(lastLetter);
+    struct Node* list = NULL; // Initialize the list
+    int last = 0;
+    for (int i = 0; check[i] != '\0'; i++) {//checks to make sure that the last element of "check"is not "NULL"
+         last =i;
+    }
+    last =last- 1;
+        for (int j = 0; j < readLength; j++) {
+            char firstLetter = tolower(read[j][0]);
+            char lastLetter = tolower(check[0][last-1]);
 
-        for (int j = 0; s[j] != NULL; j++) {
-            char firstLetter = tolower(s[j][0]);
-
-            if (searchKey == firstLetter) {
-                // Create a new node to store the matching word
-                Node* newNode = (Node*)malloc(sizeof(Node));
-                newNode->word = s[j];
-                newNode->next = NULL;
-
-                // Add the new node to the linked list
-                if (store[i] == NULL) {
-                    store[i] = newNode;
-                } else {
-                    Node* current = store[i];
-                    while (current->next != NULL) {
-                        current = current->next;
-                    }
-                    current->next = newNode;
-                }
+            if (firstLetter == lastLetter) {
+                // Create a new node and store the matching string
+                struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+                newNode->data = read[j];
+                newNode->next = list;
+                list = newNode;
             }
         }
+    
+
+    // Print the list(for checking purposes)
+    struct Node* current = list;
+    while (current != NULL) {
+        printf("%s\n", current->data);
+        current = current->next;
     }
 }
 
 int main() {
     char* read[] = {"apple", "banana", "cherry", "date", NULL};
-    char* s[] = {"elephant", "avocado", "ornament", "elk", "emperor", NULL};
+    char* check[] = {"bob"};
 
-    printf("Testing CheckIfExists function:\n");
-    CheckIfExists(read, s);
-
-    // Print the results from the linked lists
-    for (int i = 0; i < 10; i++) {
-        Node* current = store[i];
-        while (current != NULL) {
-            printf("Match at i=%d: %s\n", i, current->word);
-            current = current->next;
-        }
-    }
+    printf("Matching strings:\n");
+    checkIfExists(read, check);
 
     return 0;
 }
+
 
