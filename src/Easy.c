@@ -12,7 +12,7 @@ struct Node {
 
 struct Tallier {
     int c;
-    char** word;
+    char* word;
 };
 
 int coinToss(int n) {
@@ -23,28 +23,55 @@ int coinToss(int n) {
     return random;
 }
 
-void toLowerCase(char* str) {
-    while (*str != '\0') {
-        *str = tolower(*str);
-        str++;
+int min ( int i1, int i2 ) {
+    if ( i1 < i2 ) return i1;
+    return i2;
+}
+
+int compareStrings ( char* w1, char* w2 ) {
+    for ( int i = 0; i < min(strlen(w1), strlen(w2)); i++ ) {
+        char l1 = w1[i];
+        char l2 = w2[i];
+        if ( 65 <= l1 && l1 <= 90 ) l1 += 32;
+        if ( 65 <= l2 && l2 <= 90 ) l2 += 32;
+        if ( l1 < l2 ) return -1;
+        if ( l1 > l2 ) return 1;
     }
+    if ( strlen(w1) < strlen(w2) ) return -1;
+    if ( strlen(w1) > strlen(w2) ) return 1;
+    return 0; 
+}
+
+int binSearch ( char** spellList, int spellCount, char* spell ) {
+    int lower = 0;
+    int upper = spellCount-1;
+    while ( lower <= upper ) {
+        int mid = lower + ((upper-lower)/2);
+        int comp = compareStrings(spell, spellList[mid]);
+        if ( comp == 0 ) return mid;
+        if ( comp > 0 ) lower = mid + 1;
+        else upper = mid - 1;
+    }
+    return -1;
 }
 
 struct Tallier checkIfDefense(int length, char* read[], char* word, const bool* usedwordList) {
     struct Tallier content;
     content.c = 0;
-    content.word = (char**)malloc(sizeof(char*));
+    content.word = (char*)malloc(strlen(word)*sizeof(char));
+    strcpy(content.word, word);
 
-    char firstLetter = tolower(word[strlen(word) - 1]);
+    int indexOfWord = binSearch(read, length, word);
+    char lastLetter = tolower(word[strlen(word) - 1]);
     
     for (int j = 0; j < length; j++) {
-        char initialLetter = tolower(read[j][0]);
-        
-        if (initialLetter == firstLetter) {
-            if (usedwordList[j] == false) {
-                content.c++;
-                content.word[0] = (char*)malloc(strlen(read[j]) + 1);
-                strcpy(content.word[0], read[j]);
+        if ( j != indexOfWord ) {
+            char initialLetter = tolower(read[j][0]);
+
+            if (initialLetter == lastLetter) {
+                if (!usedwordList[j]) {
+                    content.c++;
+                }
             }
         }
     }
@@ -55,22 +82,21 @@ struct Tallier checkIfDefense(int length, char* read[], char* word, const bool* 
 
 
 
-void checkIfExists(char* read[], char* check[], const bool* usedwordList) {
-    int readLength = 0;
-    while (read[readLength] != NULL) {
-        readLength++;
-    }
+void checkIfExists(char* read[], char* check, const bool* usedwordList, int readLength) {
 
-    char lastLetter = tolower(check[0][strlen(check[0]) - 1]);
+    char lastLetter = tolower(check[strlen(check) - 1]);
 
     struct Node* list = NULL;
     int nodecount = 0;
     for (int j = 0; j < readLength; j++) {
+
         char firstLetter = tolower(read[j][0]);
 
         if (firstLetter == lastLetter && !usedwordList[j]) {
+
             struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
-            if (usedwordList[j] == false) {
+
+            if (!usedwordList[j]) {
                 newNode->data = read[j];
                 newNode->next = list;
                 list = newNode;
@@ -80,63 +106,73 @@ void checkIfExists(char* read[], char* check[], const bool* usedwordList) {
     }
 
     struct Node* current = list;
-    struct Tallier tally[readLength];
-    int count = 0;
-
-    while (current != NULL) {
-        tally[count] = checkIfDefense(readLength, read, current->data, usedwordList);
-        count++;
+    while ( current != NULL ) {
+        printf("%s ", current->data);
         current = current->next;
     }
-    struct Node* c = list;
-     char* win [count];
-     int i = 0;
-     while(c != NULL){
-      win [i++] = c->data;
-      c = c->next;
-     }
 
-    int min = tally[0].c;
-    for (int i = 0; i < count; i++) {
-        if (tally[i].c < min) {
-            min = tally[i].c;
+
+    current = list;
+    while ( current != NULL ) {
+        struct Tallier tally[readLength];
+        int count = 0;
+
+        while (current != NULL) {
+            tally[count] = checkIfDefense(readLength, read, current->data, usedwordList);
+            count++;
+            current = current->next;
         }
-    }
 
-    bool winning = false;
-    bool defense = true;
-    int x = coinToss(2); // Generate a random value for x
+        struct Node* c = list;
+        char* win [count];
+        int i = 0;
+        while(c != NULL){
+            win [i++] = c->data;
+            c = c->next;
+        }
 
-    if (count != 0) {
-        winning = true;
-    }
+        int min = tally[0].c;
+        for (int i = 0; i < count; i++) {
+            if (tally[i].c < min) {
+                min = tally[i].c;
+            }
+        }
 
-    if (tally != NULL) {
-        defense = true;
-    }
+        bool winning = false;
+        bool defense = true;
+        int x = coinToss(2); // Generate a random value for x
 
-    if (defense == false && winning == false) {
-        int rand = coinToss(readLength - 1);
-        printf("%s\n", read[rand]);
-    }
+        if (count != 0) {
+            winning = true;
+        }
 
-    if (defense == false && winning == true) {
-        if (x == 0) {
+        if (tally != NULL) {
+            defense = true;
+        }
+
+        if (defense == false && winning == false) {
             int rand = coinToss(readLength - 1);
             printf("%s\n", read[rand]);
-        } else if (x == 1) {
-            printf("%s\n", win[0] );
         }
-    }
 
-    if (defense == true && winning == true) {
-        if (x == 0) {
-            printf("%s\n", tally[min].word[0]);
-        } else if (x == 1) {
-            printf("%s\n",win[0] );
+        if (defense == false && winning == true) {
+            if (x == 0) {
+                int rand = coinToss(readLength - 1);
+                printf("%s\n", read[rand]);
+            } else if (x == 1) {
+                printf("%s\n", win[0] );
+            }
         }
-    }
 
+        if (defense == true && winning == true) {
+            if (x == 0) {
+                printf("%s\n", tally[min].word);
+            } else if (x == 1) {
+                printf("%s\n",win[0] );
+            }
+        }
+
+    }
 }
 
 
@@ -146,10 +182,11 @@ void checkIfExists(char* read[], char* check[], const bool* usedwordList) {
 
 
 int main() {
-    char* read[] = {"apple", "banana", "cherry", "date", "anana", "annana", "elena", "erry", "eat", "ear", NULL};
-    char* check[] = {"apple"};
+    char* read[] = {"apple", "banana", "cherry", "date", "anana", "annana", "elena", "erry", "eat", "ear"};
+    char* check = "apple";
     const int readLength = 10;
     bool usedwordList[10];
+    for ( int i = 0; i < 10; i++ ) usedwordList[i] = false;
 
     // Mark some words as used
     usedwordList[0] = true;
@@ -157,7 +194,7 @@ int main() {
     usedwordList[7] = true;
 
     // Test checkIfExists
-    checkIfExists(read, check, usedwordList);
+    checkIfExists(read, check, usedwordList, 10);
 
     return 0;
 }
