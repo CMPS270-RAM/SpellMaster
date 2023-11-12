@@ -83,10 +83,10 @@ char* functMedium(const char* spellList[],int spellListCount,const char* prevWor
     }
 
     //randomly return min or max
-    //int choice = coinToss(2);
-    //if(choice==1){
-        //return max_word;
-    //}
+    int choice = coinToss(2);
+    if(choice==1){
+        return max_word;
+    }
     return min_word;
 }
 
