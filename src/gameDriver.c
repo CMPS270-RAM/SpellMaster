@@ -14,6 +14,7 @@ struct Player {
   int difficulty;
 };
 
+
 struct GameStatus {
   struct Player *players[2];
   int currentTurn;
@@ -51,6 +52,7 @@ void game(int numberOfPlayers, int botDifficulty) {
 
   char **spellList = readSpells("./spells.txt");
   int spellCount = readSpellCount("./spells.txt");
+  
 
   struct Player p1;
   struct Player p2;
@@ -87,7 +89,7 @@ void game(int numberOfPlayers, int botDifficulty) {
     strcpy(p2.name, "Harry Bot-ter");
   }
 
-  struct GameStatus game;
+ struct GameStatus game;
   game.players[0] = &p1;
   game.players[1] = &p2;
   game.currentTurn = coinToss(2);
