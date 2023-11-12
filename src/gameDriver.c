@@ -126,7 +126,7 @@ void game(int numberOfPlayers, int botDifficulty) {
         strcpy(spell, botMedium());
         break;
       case 3:
-        strcpy(spell, botHard());
+        strcpy(spell, botHard( spellList, spellCount, game.usedSpells, game.lastUsedSpell));
         break;
       default:
         strcpy(spell, botEasy());
