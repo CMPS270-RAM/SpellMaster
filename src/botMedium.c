@@ -1,0 +1,3 @@
+char* botMedium () {
+    return "word";
+}
