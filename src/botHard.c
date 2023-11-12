@@ -82,7 +82,19 @@ struct PathStats {
     double loses;
 };
 
+double recCount = 0;
+
 struct PathStats getPathStats ( struct Node *outWords, struct Node **graph, char**spellList, bool *usedSpells, const int spellCount, int turn ) {
+    
+    recCount ++;
+    double maxRec = 1000000.0;
+    if ( recCount > maxRec ) {
+        struct PathStats stats;
+        stats.wins = 0;
+        stats.loses = 0;
+        return stats;
+    }
+
 
     if ( isEmpty( outWords ) ) {
 
@@ -185,7 +197,6 @@ char *botHard( char **spellList, const int spellCount, const bool *usedSpells, c
 
   for ( int i = 0; i < possiblePlaysCount; i++ ) {
 
-      printGraph(spellCount, spellList, graph);
       struct Node *temp = graph[possiblePlays[i]];
       graph[possiblePlays[i]] = NULL;
       for ( int j = 0; j < spellCount; j++ ) {
@@ -203,14 +214,7 @@ char *botHard( char **spellList, const int spellCount, const bool *usedSpells, c
           }
       }
       usedSpellsCopy[possiblePlays[i]] = false;
-
-      printf("\n");
-      printList(graph[possiblePlays[i]], spellList);
-      printf("\n\n");
-      printGraph(spellCount, spellList, graph);
   }
-
-  return "";
 
   double minLoses = pow(2, 64);
   int minLosesWord = -1;
@@ -224,4 +228,48 @@ char *botHard( char **spellList, const int spellCount, const bool *usedSpells, c
 
   return spellList[possiblePlays[minLosesWord]];
 }
+
+//  char *botHard( char **spellList, const int spellCount, const bool *usedSpells, const char *previousSpell, int turn) {
+
+//    struct Node *graph [spellCount];
+//    char* copy;
+//    strcpy(copy, previousSpell);
+//    int indexPrevSpell = binSearch(spellList, spellCount, copy);
+
+//    for (int i = 0; i < spellCount; i++) {
+//        graph[i] = NULL;
+//        if (!usedSpells[i] || i == indexPrevSpell) {
+//            for (int j = 0; j < spellCount; j++) {
+//                if (i != j && !usedSpells[j] && beginsWithLetter(spellList[j], spellList[i])) {
+//                    insertNode(j, &graph[i]);
+//                }
+//            }
+//        }
+//    } 
+
+
+
+//  }
+
+//  bool traverseGraph ( struct Node ** graph, int NodeStart, int spellCount, int turn ) {
+//      if ( isEmpty(graph[NodeStart]) ) {
+//          return false;
+//      }
+//      struct Node *temp = graph[NodeStart];
+//      graph[NodeStart] = NULL;
+//      for ( int i = 0; i < spellCount; i++ ) {
+//          deleteNode(NodeStart, &graph[i]);
+//      }
+
+//      if ( turn % 2 == 0 ) {
+
+//      }
+
+
+
+//  }
+
+
+
+
 
