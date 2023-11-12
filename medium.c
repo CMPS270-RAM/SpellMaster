@@ -3,99 +3,101 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <stdbool.h>
-void wordsStartingWithLetter(const char* spellList[], int wordCount, char targetLetter, const char* options[]) {
-    //pre - conditions : 
-    //post - conditions : 
-    int resultCount = 0; 
-    for(int i = 0; i < wordCount; i++) {
-        if (spellList[i][0] == targetLetter) {
-            options[resultCount] = spellList[i];
-            resultCount++;
-        }
-    }
-}
-void collectMatchingWords(const char* spellList[], int spellListCount, const char* options[], int optionsCount, int* result[]) {
-    //pre-cond: 
-    //post-cond:
-    int resultCount = 0;
-    for (int i = 0; i < optionsCount; i++) {
-        const char* targetWord = options[i];
-        char lastLetter = targetWord[strlen(targetWord) - 1];
+#include <ctype.h>
+void creatTally(const char* spellList[],int spellListCount,const bool* usedwordList,int *tally,int tallySize){
+    /*  pre:    spell list must be passed along with its size 
+                tally must be created in the function calling this one 
+                usedword list must be passed
 
-        for (int j = 0; j < spellListCount; j++) {
-            const char* currentWord = spellList[j];
-            if (currentWord[0] == lastLetter) {
-                result[i]++;
-            }
-        }
-    }
-}
-void creatTally(const char* spellList[],int spellListCount,const char* usedwordList[],int usedwordListCount,int *tally,int tallySize){
-    for (int i = 0; i < tallySize; i++) {
+        post:   will return a list representing the number of words available starting with each letter of the alphabet
+    */
+    for (int i = 0; i < tallySize; i++) { //initialize tally to zeros 
         tally[i] = 0;
     }
+
     for (int i = 0; i < spellListCount; i++) {
         const char *word = spellList[i];
-    
-        //need to change word  to lowercase.
-
-        int used = 1;//word not in used 
-        for (int j=0;j<usedwordListCount;j++){
-            int used = strcmp(word, usedwordList[j]);
-            if (used==0){
-            //word is ALREADY USED 
-             break;
-            }
-        }
-        if (used==1){//not used -> add it to tally
-        int index = tolower(word[0]) - 'a';
-        tally[index]++;
+        //if word is not used add it to tally
+        if(usedwordList[i]==false){
+            int index = tolower(word[0]) - 'a';
+            tally[index]++;
         }
     }
 }
-char* functMedium(const char* spellList[],int spellListCount,const char* prevWord,const char* usedwordList[],int usedwordListCount){
+char* functMedium(const char* spellList[],int spellListCount,const char* prevWord,const bool* usedwordList){
+    /* pre: the list of words along with its size 
+            the prev word played 
+            the usedwords list 
+        post:
+    */
+
     int* tally = (int*)malloc(27 * sizeof(int));
-    tally=creatTally(spellList,spellListCount,usedwordList,usedwordListCount,tally,27)
+    creatTally(spellList,spellListCount,usedwordList,tally,27);
+
     char lastLetter = prevWord[strlen(prevWord) - 1];
+
+    //check if winning word exsists and return it if it does
     for (int i = 0; i < spellListCount; i++) {
-        char *word = spellList[i];
-        //IF WINING WORD :
-        if(word[0]==lastLetter&&tally[tolower(word[strlen(word) - 1])-'a']==0){
-            return word;
+        char *current = spellList[i];
+        if( current[0]==lastLetter && tally[tolower(current[strlen(current) - 1])-'a']==0){
+            return current;
         }
-        //IF NOT WIINING WORD CHECK IF DEFENSE 
-        else if(word[0]==lastLetter){
+    }
+
+    // check if defense word exsists and return it if its safe
+    for (int i = 0; i < spellListCount; i++) {
+        char *current2 = spellList[i];
+        if(current2[0]==lastLetter){
             bool noLose=true;
-            //int last = tolower(lastLetter)-'a';
-            for (int j = 0; j < spellListCount; i++) {
-                char *word2 = spellList[i];
-                if(tally[tolower(word2[strlen(word2) - 1])-'a']==0){
+            char last= current2[strlen(current2) - 1];
+            for (int k = 0; k < spellListCount; k++) {
+                char *current3 = spellList[k];
+                if(tally[tolower(current3[strlen(current3) - 1])-'a'] == 0){
                     noLose=false;
                     break;
                 }
-                return word;
+                return current2; //its a word that wont make u lose 
             }
         }   
     }
-    //if word neither defense nor winning :
-    char *min_word;
+
+    // check the min and max words and chose one randomly as your last option
+    char* min_word;
     char* max_word;
     int max=INT_MIN;
     int min=INT_MAX;
     for (int i = 0; i < spellListCount; i++) {
-        char *word = spellList[i];
-        if(word[0]==lastLetter){
-            if(tally[tolower(word[strlen(word) - 1])-'a']>max){
-                max=tally[tolower(word[strlen(word) - 1])-'a'];
-                max_word=word;
+        char *lastopt = spellList[i];
+        if(lastopt[0] == lastLetter){
+            //word with max number of next options
+            if(tally[tolower(lastopt[strlen(lastopt) - 1])-'a'] > max){
+                max = tally[tolower(lastopt[strlen(lastopt) - 1])-'a'];
+                max_word = lastopt;
             }
-            if(tally[tolower(word[strlen(word) - 1])-'a']<min){
-                min=tally[tolower(word[strlen(word) - 1])-'a'];
-                min_word=word;
+            //word with min num of next options
+            if(tally[tolower(lastopt[strlen(lastopt) - 1])-'a']< min){
+                min = tally[tolower(lastopt[strlen(lastopt) - 1])-'a'];
+                min_word = lastopt;
             }
         }
-        //return either minword or maxword
     }
 
+    //randomly return min or max
+    int choice = coinToss(2);
+    if(choice==1){
+        return max_word;
+    }
+    return min_word;
+}
+
+int main(){
+    int* tally = (int*)malloc(27 * sizeof(int));
+    char *string[] = {"a1a", "b1f", "c1", "d1", "h1","a2","b2","f1","h2","a3","b3","z1"};
+    bool boolean[] = {false,false,false,false,false,false,false,false,false,false,false};
+    creatTally(string,12,boolean,tally,27);
+    for (int i = 0; i < 26; i++) {
+        printf("%d\n", tally[i]);
+    }
+    return 0;
 }
 
