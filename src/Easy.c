@@ -1,45 +1,65 @@
-#include "../include/header.h"
-#include <stdbool.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
 
+typedef struct Node {
+    char* word;
+    struct Node* next;
+} Node;
 
-char toLowerCase ( char c ) {
-    if ( 65 <= c && c <= 90 ) return c+32;
-    return c;
-}
-char* store[10][10];
-void CheckIfExists(char **read, char *s[10]) {//checks if a word is a winning word for the current level & stores it in an array.
+Node* store[10]; // Array of linked lists
+
+void CheckIfExists(char** read, char* s[10]) {
     int length = 0;
     while (read[length] != NULL) {
         length++;
     }
+
     for (int i = 0; i < length; i++) {
-        for (int j = 0; j < length; j++) {
-            char lastLetter = read[i][strlen(read[i]) - 1];
-            char firstLetter = s[j][0];
-            
-            if (toLowerCase(lastLetter) == toLowerCase(firstLetter)) {
-                store[i][j] = s[j];
-                printf("%d",i);
-                printf("%s\n",store[i][j]);
+        char lastLetter = read[i][strlen(read[i]) - 1];
+        char searchKey = tolower(lastLetter);
+
+        for (int j = 0; s[j] != NULL; j++) {
+            char firstLetter = tolower(s[j][0]);
+
+            if (searchKey == firstLetter) {
+                // Create a new node to store the matching word
+                Node* newNode = (Node*)malloc(sizeof(Node));
+                newNode->word = s[j];
+                newNode->next = NULL;
+
+                // Add the new node to the linked list
+                if (store[i] == NULL) {
+                    store[i] = newNode;
+                } else {
+                    Node* current = store[i];
+                    while (current->next != NULL) {
+                        current = current->next;
+                    }
+                    current->next = newNode;
+                }
             }
         }
     }
 }
 
+int main() {
+    char* read[] = {"apple", "banana", "cherry", "date", NULL};
+    char* s[] = {"elephant", "avocado", "ornament", "elk", "emperor", NULL};
 
-
-
-int main(){
-      char *read[] = {"Apple", "Banana", "Cherry", "Date", NULL};
-    char *s[] = {"elena", "anana", "herry", "ate", NULL};
-
+    printf("Testing CheckIfExists function:\n");
     CheckIfExists(read, s);
-  
-  return 10;
+
+    // Print the results from the linked lists
+    for (int i = 0; i < 10; i++) {
+        Node* current = store[i];
+        while (current != NULL) {
+            printf("Match at i=%d: %s\n", i, current->word);
+            current = current->next;
+        }
+    }
+
+    return 0;
 }
-
-
 
