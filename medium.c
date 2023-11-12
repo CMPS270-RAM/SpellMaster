@@ -39,7 +39,7 @@ char* functMedium(const char* spellList[],int spellListCount,const char* prevWor
     //check if winning word exsists and return it if it does
     for (int i = 0; i < spellListCount; i++) {
         char *current = spellList[i];
-        if( current[0]==lastLetter && tally[tolower(current[strlen(current) - 1])-'a']==0){
+        if( current[0]==lastLetter && tally[tolower(current[strlen(current) - 1])-'a']==0 && usedwordList[i]==false){
             return current;
         }
     }
@@ -47,7 +47,7 @@ char* functMedium(const char* spellList[],int spellListCount,const char* prevWor
     // check if defense word exsists and return it if its safe
     for (int i = 0; i < spellListCount; i++) {
         char *current2 = spellList[i];
-        if(current2[0]==lastLetter){
+        if(current2[0]==lastLetter && usedwordList[i]==false){
             bool noLose=true;
             char last= current2[strlen(current2) - 1];
             for (int k = 0; k < spellListCount; k++) {
@@ -68,7 +68,7 @@ char* functMedium(const char* spellList[],int spellListCount,const char* prevWor
     int min=INT_MAX;
     for (int i = 0; i < spellListCount; i++) {
         char *lastopt = spellList[i];
-        if(lastopt[0] == lastLetter){
+        if(lastopt[0] == lastLetter && usedwordList[i]==false){
             //word with max number of next options
             if(tally[tolower(lastopt[strlen(lastopt) - 1])-'a'] > max){
                 max = tally[tolower(lastopt[strlen(lastopt) - 1])-'a'];
@@ -83,21 +83,20 @@ char* functMedium(const char* spellList[],int spellListCount,const char* prevWor
     }
 
     //randomly return min or max
-    int choice = coinToss(2);
-    if(choice==1){
-        return max_word;
-    }
+    //int choice = coinToss(2);
+    //if(choice==1){
+        //return max_word;
+    //}
     return min_word;
 }
 
 int main(){
     int* tally = (int*)malloc(27 * sizeof(int));
-    char *string[] = {"a1a", "b1f", "c1", "d1", "h1","a2","b2","f1","h2","a3","b3","z1"};
-    bool boolean[] = {false,false,false,false,false,false,false,false,false,false,false};
-    creatTally(string,12,boolean,tally,27);
-    for (int i = 0; i < 26; i++) {
-        printf("%d\n", tally[i]);
-    }
+    char *string[] = {"apple", "banana", "cherry", "fruit", "avocado","apricots","pineapples","lemons","strawberry","blueberry","raspberry","yams"};
+    bool boolean[] = {false,false,false,false,false,false,false,false,false,false,false,false};
+    char* chosen = functMedium(string,12,"ana",boolean);
+    printf("%s",chosen);
+    
     return 0;
 }
 
