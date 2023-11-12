@@ -28,7 +28,10 @@ char* functMedium(const char* spellList[],int spellListCount,const char* prevWor
     /* pre: the list of words along with its size 
             the prev word played 
             the usedwords list 
-        post:
+        post: 
+        will return the winning word with no more chances for player to play if possible 
+        will return a word that helps gauaranteeing not losing in case the first option doesnt exsist
+        will return a word with min or max following words to be played if neither winning or defense words exsist
     */
 
     int* tally = (int*)malloc(27 * sizeof(int));
@@ -85,16 +88,16 @@ char* functMedium(const char* spellList[],int spellListCount,const char* prevWor
     //randomly return min or max
     int choice = coinToss(2);
     if(choice==1){
-        return max_word;
+       return max_word;
     }
     return min_word;
 }
 
 int main(){
     int* tally = (int*)malloc(27 * sizeof(int));
-    char *string[] = {"apple", "banana", "cherry", "fruit", "avocado","apricots","pineapples","lemons","strawberry","blueberry","raspberry","yams"};
-    bool boolean[] = {false,false,false,false,false,false,false,false,false,false,false,false};
-    char* chosen = functMedium(string,12,"ana",boolean);
+    char *string[] = {"apple", "banana", "cherry", "fruit", "avocado","apricots","pineapples","lemons","strawberry","blueberry","raspberry","sams"};
+    bool boolean[] = {true,false,false,false,false,true,false,false,false,false,false,false};
+    char* chosen = functMedium(string,12,"b",boolean);
     printf("%s",chosen);
     
     return 0;
