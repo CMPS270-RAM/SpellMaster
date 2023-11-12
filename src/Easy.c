@@ -3,6 +3,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <time.h>
+#include <stdbool.h>
 
 struct Node {
     char* data;
@@ -14,12 +15,12 @@ struct Tallier {
     char** word;
 };
 
-int coinToss (int n) {
-  time_t t1;
-  srand((unsigned)time(&t1));
-  int random = rand() % n;
+int coinToss(int n) {
+    time_t t1;
+    srand((unsigned)time(&t1));
+    int random = rand() % n;
 
-  return random;
+    return random;
 }
 
 void toLowerCase(char* str) {
@@ -38,23 +39,25 @@ struct Tallier checkIfDefense(int length, char* read[], char* word) {
 
     for (int j = 0; j < length; j++) {
         char firstLetter = tolower(read[j][0]);
-        if (firstLetter == lastLetter) {
+        if ((firstLetter == lastLetter) ) {
             content.c++;
             content.word[0] = read[j];
+             printf("%s    %d\n", content.word[0], content.c);
         }
     }
 
     return content;
 }
 
-void checkIfExists(char* read[], char* check[]) {
+char* checkIfExists(char* read[], char* check[]) {
     int readLength = 0;
     while (read[readLength] != NULL) {
         readLength++;
     }
 
-    struct Node* list = NULL; // Initialize the list
     char lastLetter = tolower(check[0][strlen(check[0]) - 1]);
+
+    struct Node* list = NULL; // Initialize the list
 
     for (int j = 0; j < readLength; j++) {
         char firstLetter = tolower(read[j][0]);
@@ -68,7 +71,6 @@ void checkIfExists(char* read[], char* check[]) {
         }
     }
 
-    // Print the list (for checking purposes)
     struct Node* current = list;
     struct Tallier tally[readLength];
     int count = 0;
@@ -78,23 +80,45 @@ void checkIfExists(char* read[], char* check[]) {
         count++;
         current = current->next;
     }
-
-    for (int i = 0; i < count; i++) {
-        printf("%s    %d:\n", tally[i].word[0], tally[i].c);
-        free(tally[i].word); // Free allocated memory
+   char * h = "hello";
+    if (count == 0) {
+      printf("from no words");
+        // No matching words found
+        return h;
     }
 
-    
+    int x = coinToss(2);
+
+    if (x == 0) {
+      printf("from x = 0");
+        return tally[0].word[0]; // Return the first matching string
+    } else {
+      printf("from else!");
+        int randomIndex = coinToss(count);
+        return tally[randomIndex].word[0]; // Return a random matching string
+    }
 }
 
+
+
+
+
+
 int main() {
-    char* read[] = {"apple", "banana", "cherry", "date", NULL};
+    char* read[] = {"apple", "banana", "cherry", "date", "anana", "annana", NULL};
     char* check[] = {"bob"};
 
     printf("Matching strings:\n");
-    checkIfExists(read, check);
+    char* result = checkIfExists(read, check);
+
+    if (result == NULL) {
+        printf("No matching words found\n");
+    } else {
+        printf("Matching word: %s\n", result);
+    }
 
     return 0;
 }
+
 
 
