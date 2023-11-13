@@ -38,8 +38,14 @@ char* botMedium(char* spellList[],int spellListCount,int turn,const char* prevWo
     
     int* tally = (int*)malloc(27 * sizeof(int));
     creatTally(spellList,spellListCount,usedwordList,tally,27);
+    char lastLetter;
+    if(turn!= 0){
+     lastLetter = prevWord[strlen(prevWord) - 1];
+    }
+    else {
+        lastLetter='$';// meaning there is no last letter to work with;
+    }
 
-    char lastLetter = prevWord[strlen(prevWord) - 1];
 
     //check if winning word exsists and return it if it does
     for (int i = 0; i < spellListCount; i++) {
