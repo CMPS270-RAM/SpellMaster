@@ -84,6 +84,27 @@ struct PathStats {
 
 double recCount = 0;
 
+/*
+ * (In our implementation we still have an unresolved issue with this function so it is sadly not preforming as it should ;-;)
+ * Specifications:
+ * pre:
+ * outWords: a linked list of the possible outgoing words that can be played
+ * graph: a directional graph (implemented using a two dimensional adj list) with all the node connections
+ * spellList: a list of all the possble words\spells that can be played
+ * usedSpells: a boolean list indicating which spells have been played already
+ * spellCount: the total number of spells
+ * turn: indicating which turn the function is currently on
+ *
+ * post:
+ * if there are no outWords it is expected to return who would win with that word based on the turn and count that as a loss or a wins
+ * if there are outWords the function is expected to simulate playing the word by removing it from the graph and repeat the function call on its possible outWords
+ * which will all be added up to find and return the possible number of wins and loses for each possible path
+ *
+ * Testing:
+ * case 1: test with no outWords and it should return a PathStats struct (simply a count for wins and losses) with one win or lose depending on the turn
+ * case 2: test with a simple graph and insure that it is going through all the possible paths and returning the right number of possible wins and losses for each path
+ *
+ */
 struct PathStats getPathStats ( struct Node *outWords, struct Node **graph, char**spellList, bool *usedSpells, const int spellCount, int turn ) {
     
     recCount ++;
@@ -160,6 +181,27 @@ struct PathStats getPathStats ( struct Node *outWords, struct Node **graph, char
     }
 }
 
+/*
+ * Specifications:
+ * pre:
+ * spellList: a list of all the possble words\spells that can be played
+ * usedSpells: a boolean list indicating which spells have been played already
+ * spellCount: the total number of spells
+ * previousSpell: the previously played spell so that we know the possible next words to play  
+ * turn: indicating whether this is the first turn or not
+ *
+ * post:
+ * to return the next play which puts you on the path with the least loses
+ * it builds the graph and uses the previous word to find out what are the possible next plays and starts the recursive calls to find which is the best path:w
+ *
+ * Testing:
+ * case 1: test with an empty graph
+ * case 2: test with a graph that has an obvious win path 
+ * case 3: test with a graph that has an obvious lose path
+ * case 4: test that a valid and unplayed word is returned
+ *
+ */
+
 char *botHard( char **spellList, const int spellCount, const bool *usedSpells, const char *previousSpell, int turn) {
 
   struct Node *graph [spellCount];
@@ -228,47 +270,6 @@ char *botHard( char **spellList, const int spellCount, const bool *usedSpells, c
 
   return spellList[possiblePlays[minLosesWord]];
 }
-
-//  char *botHard( char **spellList, const int spellCount, const bool *usedSpells, const char *previousSpell, int turn) {
-
-//    struct Node *graph [spellCount];
-//    char* copy;
-//    strcpy(copy, previousSpell);
-//    int indexPrevSpell = binSearch(spellList, spellCount, copy);
-
-//    for (int i = 0; i < spellCount; i++) {
-//        graph[i] = NULL;
-//        if (!usedSpells[i] || i == indexPrevSpell) {
-//            for (int j = 0; j < spellCount; j++) {
-//                if (i != j && !usedSpells[j] && beginsWithLetter(spellList[j], spellList[i])) {
-//                    insertNode(j, &graph[i]);
-//                }
-//            }
-//        }
-//    } 
-
-
-
-//  }
-
-//  bool traverseGraph ( struct Node ** graph, int NodeStart, int spellCount, int turn ) {
-//      if ( isEmpty(graph[NodeStart]) ) {
-//          return false;
-//      }
-//      struct Node *temp = graph[NodeStart];
-//      graph[NodeStart] = NULL;
-//      for ( int i = 0; i < spellCount; i++ ) {
-//          deleteNode(NodeStart, &graph[i]);
-//      }
-
-//      if ( turn % 2 == 0 ) {
-
-//      }
-
-
-
-//  }
-
 
 
 
