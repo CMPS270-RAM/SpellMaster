@@ -49,9 +49,11 @@ char* botEasy (char* read[], char* check, const bool* usedwordList, int readLeng
     int nodecount = 0;
     for (int j = 0; j < readLength; j++) {
         char firstLetter = tolower(read[j][0]);
-        if ((firstLetter == lastLetter && !usedwordList[j])||turn==0) {
-            nodecount++;
-        }
+        if ( turn != 0 ) {
+            if ( firstLetter == lastLetter && !usedwordList[j] ) {
+                nodecount++;
+            }
+        } else nodecount++;
     }
 
     char** list  = (char**)malloc(sizeof(char)*100*nodecount);
@@ -59,10 +61,14 @@ char* botEasy (char* read[], char* check, const bool* usedwordList, int readLeng
     int count = 0;
     for (int j = 0; j < readLength; j++) {
         char firstLetter = firstLetter = tolower(read[j][0]);
-        if ((firstLetter == lastLetter && !usedwordList[j])||turn == 0) {
-            list[count] = read[j];
-            count++;
-        }
+        if ( turn != 0 ) {
+            if (firstLetter == lastLetter && !usedwordList[j]) {
+                list[count] = read[j];
+                count++;
+            }} else {
+                list[count] = read[j];
+                count++;
+            }
     }
 
     struct Tallier tally[nodecount];

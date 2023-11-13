@@ -92,8 +92,8 @@ void game(int numberOfPlayers, int botDifficulty) {
  struct GameStatus game;
   game.players[0] = &p1;
   game.players[1] = &p2;
-  //game.currentTurn = coinToss(2);
-  game.currentTurn = 1;
+  if ( numberOfPlayers > 1 ) game.currentTurn = coinToss(2);
+  else game.currentTurn = 0;
   game.usedSpellsCount = 0;
   game.usedSpells = malloc(sizeof(bool) * spellCount);
   for (int i = 0; i < spellCount; i++)
