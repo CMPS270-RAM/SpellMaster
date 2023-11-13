@@ -92,8 +92,8 @@ void game(int numberOfPlayers, int botDifficulty) {
  struct GameStatus game;
   game.players[0] = &p1;
   game.players[1] = &p2;
-  //game.currentTurn = coinToss(2);
-  game.currentTurn = 1;
+  if ( numberOfPlayers > 1 ) game.currentTurn = coinToss(2);
+  else game.currentTurn = 0;
   game.usedSpellsCount = 0;
   game.usedSpells = malloc(sizeof(bool) * spellCount);
   for (int i = 0; i < spellCount; i++)
@@ -121,16 +121,16 @@ void game(int numberOfPlayers, int botDifficulty) {
       printf("%s chooses: ", game.players[game.currentTurn]->name);
       switch (game.players[game.currentTurn]->difficulty) {
       case 1:
-        strcpy(spell, botEasy());
+        strcpy(spell, botEasy(spellList, game.lastUsedSpell, game.usedSpells, spellCount, game.currentTurn));
         break;
       case 2:
-        strcpy(spell, botMedium());
+        strcpy(spell, botMedium(spellList,spellCount,game.lastUsedSpell,game.usedSpells));
         break;
       case 3:
         strcpy(spell, botHard( spellList, spellCount, game.usedSpells, game.lastUsedSpell, game.usedSpellsCount));
         break;
       default:
-        strcpy(spell, botEasy());
+        strcpy(spell, botEasy(spellList, game.lastUsedSpell, game.usedSpells, spellCount, game.currentTurn));
       }
       printf("%s \n", spell);
     }
