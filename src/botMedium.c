@@ -12,6 +12,11 @@ void creatTally(char* spellList[],int spellListCount,const bool* usedwordList,in
                 usedword list must be passed
 
         post:   will return a list representing the number of words available starting with each letter of the alphabet
+
+        testing : 
+            case1:-passing array with multiple words where some start with same letter 
+                 should return numbering correctly 
+                  
     */
     for (int i = 0; i < tallySize; i++) { //initialize tally to zeros 
         tally[i] = 0;
@@ -34,6 +39,13 @@ char* botMedium(char* spellList[],int spellListCount,char* prevWord,bool* usedwo
         will return the winning word with no more chances for player to play if possible 
         will return a word that helps gauaranteeing not losing in case the first option doesnt exsist
         will return a word with min or max following words to be played if neither winning or defense words exsist
+    
+        testing: 
+        case1: -make sure it doesnt return a used word
+        case2: -make sure chosen word is valid (starts with last letter of prev word)
+        case3: -make sure it choses the WIN word by checking tally = 0 if it exists 
+        case4: -make sure it choses a defense word in case first case doesnt exist 
+        case5:- make sure it choses either a min or max word in case win and defense dont exist 
     */
     
     int* tally = (int*)malloc(27 * sizeof(int));
