@@ -26,7 +26,7 @@ void creatTally(char* spellList[],int spellListCount,const bool* usedwordList,in
         }
     }
 }
-char* botMedium(char* spellList[],int spellListCount,int turn,const char* prevWord,const bool* usedwordList){
+char* botMedium(char* spellList[],int spellListCount,char* prevWord,bool* usedwordList){
     /* pre: the list of words along with its size 
             the prev word played 
             the usedwords list 
@@ -38,19 +38,11 @@ char* botMedium(char* spellList[],int spellListCount,int turn,const char* prevWo
     
     int* tally = (int*)malloc(27 * sizeof(int));
     creatTally(spellList,spellListCount,usedwordList,tally,27);
-    char lastLetter;
-    if(turn!= 0){
-     lastLetter = prevWord[strlen(prevWord) - 1];
-    }
-    else {
-        lastLetter='$';// meaning there is no last letter to work with;
-    }
-
-
+    char lastLetter= prevWord[strlen(prevWord) - 1];
     //check if winning word exsists and return it if it does
     for (int i = 0; i < spellListCount; i++) {
         char *current = spellList[i];
-        if( (current[0]==lastLetter && tally[tolower(current[strlen(current) - 1])-'a']==0 && usedwordList[i]==false) ||(turn ==0 && tally[tolower(current[strlen(current) - 1])-'a']== 0) ){
+        if(current[0]==lastLetter && tally[tolower(current[strlen(current) - 1])-'a']==0 && usedwordList[i]==false){
             return current;
         }
     }
@@ -58,7 +50,7 @@ char* botMedium(char* spellList[],int spellListCount,int turn,const char* prevWo
     // check if defense word exsists and return it if its safe
     for (int i = 0; i < spellListCount; i++) {
         char *current2 = spellList[i];
-        if((current2[0]==lastLetter && usedwordList[i]==false)|| (turn == 0)){
+        if((current2[0]==lastLetter && usedwordList[i]==false)){
             bool noLose=true;
             char last= current2[strlen(current2) - 1];
             for (int k = 0; k < spellListCount; k++) {
@@ -79,7 +71,7 @@ char* botMedium(char* spellList[],int spellListCount,int turn,const char* prevWo
     int min=INT_MAX;
     for (int i = 0; i < spellListCount; i++) {
         char *lastopt = spellList[i];
-        if((lastopt[0] == lastLetter && usedwordList[i]==false)|| (turn == 0)){
+        if(lastopt[0] == lastLetter && usedwordList[i]==false){
             //word with max number of next options
             if(tally[tolower(lastopt[strlen(lastopt) - 1])-'a'] > max){
                 max = tally[tolower(lastopt[strlen(lastopt) - 1])-'a'];
