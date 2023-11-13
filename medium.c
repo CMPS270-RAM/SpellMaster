@@ -1,22 +1,15 @@
-#include "../include/header.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <limits.h>
 #include <stdbool.h>
 #include <ctype.h>
-
-void creatTally(char* spellList[],int spellListCount,const bool* usedwordList,int *tally,int tallySize){
+void creatTally(const char* spellList[],int spellListCount,const bool* usedwordList,int *tally,int tallySize){
     /*  pre:    spell list must be passed along with its size 
                 tally must be created in the function calling this one 
                 usedword list must be passed
 
         post:   will return a list representing the number of words available starting with each letter of the alphabet
-
-        testing : 
-            case1:-passing array with multiple words where some start with same letter 
-                 should return numbering correctly 
-                  
     */
     for (int i = 0; i < tallySize; i++) { //initialize tally to zeros 
         tally[i] = 0;
@@ -31,7 +24,7 @@ void creatTally(char* spellList[],int spellListCount,const bool* usedwordList,in
         }
     }
 }
-char* botMedium(char* spellList[],int spellListCount,char* prevWord,bool* usedwordList){
+char* functMedium(const char* spellList[],int spellListCount,const char* prevWord,const bool* usedwordList){
     /* pre: the list of words along with its size 
             the prev word played 
             the usedwords list 
@@ -39,22 +32,17 @@ char* botMedium(char* spellList[],int spellListCount,char* prevWord,bool* usedwo
         will return the winning word with no more chances for player to play if possible 
         will return a word that helps gauaranteeing not losing in case the first option doesnt exsist
         will return a word with min or max following words to be played if neither winning or defense words exsist
-    
-        testing: 
-        case1: -make sure it doesnt return a used word
-        case2: -make sure chosen word is valid (starts with last letter of prev word)
-        case3: -make sure it choses the WIN word by checking tally = 0 if it exists 
-        case4: -make sure it choses a defense word in case first case doesnt exist 
-        case5:- make sure it choses either a min or max word in case win and defense dont exist 
     */
-    
+
     int* tally = (int*)malloc(27 * sizeof(int));
     creatTally(spellList,spellListCount,usedwordList,tally,27);
-    char lastLetter= prevWord[strlen(prevWord) - 1];
+
+    char lastLetter = prevWord[strlen(prevWord) - 1];
+
     //check if winning word exsists and return it if it does
     for (int i = 0; i < spellListCount; i++) {
         char *current = spellList[i];
-        if(current[0]==lastLetter && tally[tolower(current[strlen(current) - 1])-'a']==0 && usedwordList[i]==false){
+        if( current[0]==lastLetter && tally[tolower(current[strlen(current) - 1])-'a']==0 && usedwordList[i]==false){
             return current;
         }
     }
@@ -62,7 +50,7 @@ char* botMedium(char* spellList[],int spellListCount,char* prevWord,bool* usedwo
     // check if defense word exsists and return it if its safe
     for (int i = 0; i < spellListCount; i++) {
         char *current2 = spellList[i];
-        if((current2[0]==lastLetter && usedwordList[i]==false)){
+        if(current2[0]==lastLetter && usedwordList[i]==false){
             bool noLose=true;
             char last= current2[strlen(current2) - 1];
             for (int k = 0; k < spellListCount; k++) {
@@ -104,3 +92,14 @@ char* botMedium(char* spellList[],int spellListCount,char* prevWord,bool* usedwo
     }
     return min_word;
 }
+
+int main(){
+    int* tally = (int*)malloc(27 * sizeof(int));
+    char *string[] = {"apple", "banana", "cherry", "fruit", "avocado","apricots","pineapples","lemons","strawberry","blueberry","raspberry","sams"};
+    bool boolean[] = {true,false,false,false,false,true,false,false,false,false,false,false};
+    char* chosen = functMedium(string,12,"b",boolean);
+    printf("%s",chosen);
+    
+    return 0;
+}
+
