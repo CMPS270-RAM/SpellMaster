@@ -9,6 +9,6 @@ int checkSpells(char **spellList, int spellCount, char *spell);
 int coinToss (int n);
 bool checkIfSpellsRemain(char** spellList, int spellCount, bool* usedSpells, char* lastSpell);
 char* botEasy();
-char* botMedium();
+char* botMedium(char* spellList[],int spellListCount,const char* prevWord,const bool* usedwordList);
 char* botHard();
 void game(int numberOfPlayers, int botDifficulty);
