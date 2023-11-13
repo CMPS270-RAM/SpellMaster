@@ -10,7 +10,10 @@ struct Player {
   int score;
   int reasonLost;
   bool lost;
+  bool human;
+  int difficulty;
 };
+
 
 struct GameStatus {
   struct Player *players[2];
@@ -34,11 +37,12 @@ void printSpells(char **spellList, int spellCount) {
     }
   }
   printf("\n");
-  for ( int i = 0; i < 100; i++ ) printf("_");
+  for (int i = 0; i < 100; i++)
+    printf("_");
   printf("\n\n");
 }
 
-int main() {
+void game(int numberOfPlayers, int botDifficulty) {
 
   printf("\e[1;1H\e[2J");
   char *reasonsLost[4] = {
@@ -48,28 +52,52 @@ int main() {
 
   char **spellList = readSpells("./spells.txt");
   int spellCount = readSpellCount("./spells.txt");
+  
 
   struct Player p1;
-  p1.playerNumber = 1;
-  p1.score = 0;
-  p1.lost = 0;
-  printf("Player %i, Enter your name: ", p1.playerNumber);
-  scanf("%s", p1.name);
-
   struct Player p2;
-  p2.playerNumber = 2;
-  p2.score = 0;
-  p2.lost = 0;
-  printf("Player %i, Enter your name: ", p2.playerNumber);
-  scanf("%s", p2.name);
 
-  struct GameStatus game;
+  if (numberOfPlayers > 1) {
+
+    p1.playerNumber = 1;
+    p1.score = 0;
+    p1.lost = 0;
+    p1.human = true;
+    printf("Player %i, Enter your name: ", p1.playerNumber);
+    scanf("%s", p1.name);
+
+    p2.playerNumber = 2;
+    p2.score = 0;
+    p2.lost = 0;
+    p2.human = true;
+    printf("Player %i, Enter your name: ", p2.playerNumber);
+    scanf("%s", p2.name);
+
+  } else {
+    p1.playerNumber = 1;
+    p1.score = 0;
+    p1.lost = 0;
+    p1.human = true;
+    printf("Player %i, Enter your name: ", p1.playerNumber);
+    scanf("%s", p1.name);
+
+    p2.playerNumber = 2;
+    p2.score = 0;
+    p2.lost = 0;
+    p2.human = false;
+    p2.difficulty = botDifficulty;
+    strcpy(p2.name, "Harry Bot-ter");
+  }
+
+ struct GameStatus game;
   game.players[0] = &p1;
   game.players[1] = &p2;
-  game.currentTurn = coinToss(2);
+  if ( numberOfPlayers > 1 ) game.currentTurn = coinToss(2);
+  else game.currentTurn = 0;
   game.usedSpellsCount = 0;
   game.usedSpells = malloc(sizeof(bool) * spellCount);
-  for ( int i = 0; i < spellCount; i++ ) game.usedSpells[i] = false;
+  for (int i = 0; i < spellCount; i++)
+    game.usedSpells[i] = false;
 
   printf("\e[1;1H\e[2J");
   printSpells(spellList, spellCount);
@@ -84,9 +112,28 @@ int main() {
              game.lastUsedSpell);
     }
 
-    printf("%s chooses: ", game.players[game.currentTurn]->name);
     char spell[50];
-    scanf("%s", spell);
+
+    if (game.players[game.currentTurn]->human) {
+      printf("%s chooses: ", game.players[game.currentTurn]->name);
+      scanf("%s", spell);
+    } else {
+      printf("%s chooses: ", game.players[game.currentTurn]->name);
+      switch (game.players[game.currentTurn]->difficulty) {
+      case 1:
+        strcpy(spell, botEasy(spellList, game.lastUsedSpell, game.usedSpells, spellCount, game.currentTurn));
+        break;
+      case 2:
+        strcpy(spell, botMedium(spellList,spellCount,game.lastUsedSpell,game.usedSpells));
+        break;
+      case 3:
+        strcpy(spell, botHard( spellList, spellCount, game.usedSpells, game.lastUsedSpell, game.usedSpellsCount));
+        break;
+      default:
+        strcpy(spell, botEasy(spellList, game.lastUsedSpell, game.usedSpells, spellCount, game.currentTurn));
+      }
+      printf("%s \n", spell);
+    }
 
     if (game.usedSpellsCount != 0) {
       if (!beginsWithLetter(spell, game.lastUsedSpell)) {

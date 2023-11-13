@@ -8,7 +8,7 @@ char toLowerCase ( char c ) {
     return c;
 }
 
-bool beginsWithLetter(char *spell, char *lastSpell) {
+bool beginsWithLetter(const char *spell, const char *lastSpell) {
   return toLowerCase(spell[0]) == toLowerCase(lastSpell[strlen(lastSpell) - 1]);
 }
 
