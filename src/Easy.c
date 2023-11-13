@@ -97,18 +97,22 @@ void checkIfExists(char* read[], char* check, const bool* usedwordList, int read
     char** list  = (char**)malloc(sizeof(char)*100*nodecount);
 
     int count = 0;
+    printf("Printing list");
     for (int j = 0; j < readLength; j++) {
         char firstLetter = tolower(read[j][0]);
         if (firstLetter == lastLetter && !usedwordList[j]) {
             list[count] = read[j];
+            printf("%10s",list[count]);
             count++;
         }
     }
 
     struct Tallier tally[nodecount];
-
-    for ( int i = 0; i < nodecount; i++ )
+    printf("%s printing Tally:");
+    for ( int i = 0; i < nodecount; i++ ){
         tally[i] = checkIfDefense(readLength, read, list[i], usedwordList);
+        printf("%s\n", tally[i].word);
+    }
 
     int min = tally[0].c;
     for (int i = 0; i < count; i++) {
@@ -139,7 +143,7 @@ void checkIfExists(char* read[], char* check, const bool* usedwordList, int read
             int rand = coinToss(readLength - 1);
             printf("%s\n", read[rand]);
         } else if (x == 1) {
-            printf("%s\n", tally[0] );
+            printf("%s\n", list[0]);
         }
     }
 
@@ -147,7 +151,7 @@ void checkIfExists(char* read[], char* check, const bool* usedwordList, int read
         if (x == 0) {
             printf("%s\n", tally[min].word);
         } else if (x == 1) {
-            printf("%s\n",tally[0] );
+            printf("%s\n",list[0] );
         }
     }
 
@@ -160,7 +164,7 @@ void checkIfExists(char* read[], char* check, const bool* usedwordList, int read
 
 
 int main() {
-    char* read[] = {"apple", "banana", "cherry", "date", "anana", "annana", "elena", "erry", "eat", "ear"};
+    char* read[] = {"apple", "banana", "yaya", "date", "anana", "annana", "elena", "erry", "eel", "ear"};
     char* check = "apple";
     const int readLength = 10;
     bool usedwordList[10];
@@ -169,7 +173,6 @@ int main() {
     // Mark some words as used
     usedwordList[0] = true;
     usedwordList[6] = true;
-    usedwordList[7] = true;
 
     // Test checkIfExists
     checkIfExists(read, check, usedwordList, 10);
